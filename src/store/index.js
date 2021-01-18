@@ -14,10 +14,10 @@ export default createStore({
   },
   mutations: {
     setBetPlus(state) {
-      state.currentBet += 50;
+      state.currentBet += 25;
     },
     setBetMinus(state) {
-      state.currentBet -= 50;
+      state.currentBet -= 25;
     },
     setDealerMoney(state, value) {
       state.dealerMoney = value;
