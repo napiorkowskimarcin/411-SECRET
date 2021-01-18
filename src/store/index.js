@@ -6,6 +6,11 @@ export default createStore({
     currentBet: 50,
     isGameRunning: false,
     dealerMoney: 0,
+    stats: {
+      wins: 0,
+      losses: 0,
+      draws: 0,
+    },
   },
   mutations: {
     setBetPlus(state) {
@@ -32,5 +37,6 @@ export default createStore({
     getCurrentAccount: (state) => state.accountValue,
     getGameRunning: (state) => state.isGameRunning,
     getDealerMoney: (state) => state.dealerMoney,
+    getGameStats: (state) => state.stats,
   },
 });
