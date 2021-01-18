@@ -3,11 +3,11 @@
     Your account: <span>{{ accountValue }}</span
     >$
   </div>
-  <div>
+  <div v-if="!isGameRunning">
     Set bet: <span>{{ currentBet }}</span
     >$
   </div>
-  <div class="row d-flex justify-content-around">
+  <div class="row d-flex justify-content-around" v-if="!isGameRunning">
     <button class="btn btn-primary" @click="increaseBet">+</button>
     <button class="btn btn-primary" @click="decreaseBet">-</button>
   </div>
@@ -26,6 +26,7 @@ export default {
     return {
       // currentBet: 0,
       // accountValue: 0,
+      //isGameRunning: 0,
     };
   },
   computed: {
@@ -35,7 +36,11 @@ export default {
     accountValue() {
       return this.$store.getters.getCurrentAccount;
     },
+    isGameRunning() {
+      return this.$store.getters.getGameRunning;
+    },
   },
+
   methods: {
     increaseBet() {
       if (this.currentBet < this.accountValue) {
