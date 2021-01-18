@@ -1,14 +1,14 @@
 <template>
-  <div>
-    Main App
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    SECRET HOMEWORK
+  </nav>
+  <div class="container">
+    <router-view />
   </div>
 </template>
 
-<script>
-export default {
-  name: "App",
-  components: {},
-};
-</script>
-
-<style></style>
+<style>
+body {
+  background-color: rgb(116, 206, 108);
+}
+</style>
