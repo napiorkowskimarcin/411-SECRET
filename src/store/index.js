@@ -55,6 +55,17 @@ export default createStore({
     setStandOn(state) {
       state.isStandOn = true;
     },
+    endround(state) {
+      state.stats.gamesPlayed++;
+      state.isStanOn = false;
+      state.canDoubleDown = true;
+      state.isGameRunning = false;
+      state.playerpoint = 0;
+      state.dealerPoint = 0;
+      state.errors = "";
+      return alert("over21 - lost game becouse of special");
+    },
+    //ADD A VALUE FROM THE CARD TO CURRENT POINTS - PLAYER
     increasePlayerPoints(state, value) {
       if (value === "ACE") {
         if (state.playerpoint < 11) {
@@ -74,7 +85,8 @@ export default createStore({
           state.isGameRunning = false;
           state.playerpoint = 0;
           state.dealerPoint = 0;
-          alert("over21 - lost game becouse of special");
+          state.errors = "";
+          return alert("over21 - lost game becouse of special card");
         }
       }
       state.playerpoint += parseInt(value);
@@ -88,12 +100,11 @@ export default createStore({
         state.isGameRunning = false;
         state.playerpoint = 0;
         state.dealerPoint = 0;
-        alert("over21 - lost game becouse of normal card");
+        state.errors = "";
+        return alert("over21 - lost game becouse of normal card");
       }
-
-      // console.log("current value of player with value:" + state.playerpoint);
-      // return state.playerpoint;
     },
+    //ADD A VALUE FROM THE CARD TO CURRENT POINTS - DEALER
     increaseDealerPoints(state, value) {
       if (value === "ACE") {
         if (state.dealerPoint < 11) {
@@ -113,7 +124,8 @@ export default createStore({
           state.isGameRunning = false;
           state.playerpoint = 0;
           state.dealerPoint = 0;
-          alert("over21 - win game becouse of special");
+          state.errors = "";
+          return alert("over21 - win game becouse of special");
         }
       }
       state.dealerPoint += parseInt(value);
@@ -126,7 +138,8 @@ export default createStore({
         state.isGameRunning = false;
         state.playerpoint = 0;
         state.dealerPoint = 0;
-        alert("over21 - win game becouse of normal card");
+        state.errors = "";
+        return alert("over21 - win game becouse of normal card");
       }
     },
   },

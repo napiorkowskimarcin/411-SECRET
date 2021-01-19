@@ -62,12 +62,18 @@ export default {
 
   methods: {
     async startGame() {
-      //for the very first game
+      //For the very first game
       if (!this.$store.getters.getGameStats.gamesPlayed) {
         //Set selected Bet as Dealer money, and deduct it from the account value.
         this.$store.commit("setDealerMoney", this.$store.state.currentBet);
         //get the deck id from the API:  https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6
         this.$store.dispatch("axiosNewDecks");
+      } else if (0 <= this.$store.getters.getGameStats.gamesPlayed <= 5) {
+        //For the other games
+        //Set selected Bet as Dealer money, and deduct it from the account value.
+        this.$store.commit("setDealerMoney", this.$store.state.currentBet);
+      } else if (this.$store.getters.getGameStats.gamesPlayed === 5) {
+        console.log("end of the game");
       }
     },
     async hitGame() {
