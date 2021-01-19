@@ -11,7 +11,6 @@
         <HandDealer />
       </div>
     </div>
-
     <div>
       <GameInterface />
     </div>

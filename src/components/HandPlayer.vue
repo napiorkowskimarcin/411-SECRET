@@ -1,9 +1,18 @@
 <template>
+  <p>PLAYER POINTS: {{ playersPoints }}</p>
   <div class="welcome" v-if="!isGameRunning">
-    <img src="https://deckofcardsapi.com/static/img/KH.png" alt="" srcset="" />
+    <img
+      src="https://img2.pngio.com/blue-back41024x1024png-7291024-bicycle-cards-bicycle-bicycle-playing-cards-png-729_1024.png"
+      alt=""
+      srcset=""
+    />
   </div>
   <div class="game" v-if="isGameRunning">
-    <img src="https://deckofcardsapi.com/static/img/QH.png" alt="" srcset="" />
+    <img
+      src="https://img2.pngio.com/blue-back41024x1024png-7291024-bicycle-cards-bicycle-bicycle-playing-cards-png-729_1024.png"
+      alt=""
+      srcset=""
+    />
   </div>
 </template>
 
@@ -13,6 +22,9 @@ export default {
   computed: {
     isGameRunning() {
       return this.$store.getters.getGameRunning;
+    },
+    playersPoints() {
+      return this.$store.getters.getPlayersPoints;
     },
   },
 };
