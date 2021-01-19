@@ -14,11 +14,7 @@
     <button class="btn btn-primary" @click="increaseBet">+</button>
     <button class="btn btn-primary" @click="decreaseBet">-</button>
   </div>
-  <div class="row d-flex justify-content-around" v-if="isGameRunning">
-    <button class="btn btn-danger" @click="surrender" v-if="!ifStandOn">
-      SURRENDER
-    </button>
-  </div>
+  <div class="row d-flex justify-content-around" v-if="isGameRunning"></div>
 </template>
 
 <script>
@@ -66,9 +62,6 @@ export default {
       if (this.currentBet > 50) {
         this.$store.commit("setBetMinus");
       }
-    },
-    surrender() {
-      //remove curring game + lost game
     },
   },
 };

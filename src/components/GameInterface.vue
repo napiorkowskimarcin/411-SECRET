@@ -17,7 +17,11 @@
         <button class="btn btn-primary" @click="standOn" v-if="!ifStandOn">
           STAND
         </button>
-        <button class="btn btn-primary" @click="doubleDown" v-if="!ifStandOn">
+        <button
+          class="btn btn-primary"
+          @click="doubleDown"
+          v-if="!ifStandOn && canDoubleDown"
+        >
           DOUBLE-DOWN
         </button>
         <button class="btn btn-primary" @click="dealerTurn" v-if="ifStandOn">
@@ -33,6 +37,7 @@
       </div>
     </div>
     <p>Is stand mode on: {{ ifStandOn }}</p>
+    <p>Can do double down: {{ canDoubleDown }}</p>
   </div>
 </template>
 <script>
@@ -57,6 +62,9 @@ export default {
     },
     ifStandOn() {
       return this.$store.getters.getIsStandOnMode;
+    },
+    canDoubleDown() {
+      return this.$store.getters.getCanDoubleDown;
     },
   },
 

@@ -44,10 +44,11 @@ export default createStore({
     setDoubleDown(state) {
       state.accountValue -= state.dealerMoney;
       state.dealerMoney *= 2;
-    },
-    setDoubleDownOpposite(state) {
       state.canDoubleDown = !state.canDoubleDown;
     },
+    // setDoubleDownOpposite(state) {
+    //   state.canDoubleDown = !state.canDoubleDown;
+    // },
     //PART TWO - API OPERATIONS
     setDeckId(state, value) {
       state.deckId = value;
@@ -86,7 +87,7 @@ export default createStore({
           state.playerpoint = 0;
           state.dealerPoint = 0;
           state.errors = "";
-          return alert("over21 - lost game becouse of special card");
+          return alert("LOSS");
         }
       }
       state.playerpoint += parseInt(value);
@@ -101,7 +102,7 @@ export default createStore({
         state.playerpoint = 0;
         state.dealerPoint = 0;
         state.errors = "";
-        return alert("over21 - lost game becouse of normal card");
+        return alert("LOSS");
       }
     },
     //ADD A VALUE FROM THE CARD TO CURRENT POINTS - DEALER
@@ -125,7 +126,7 @@ export default createStore({
           state.playerpoint = 0;
           state.dealerPoint = 0;
           state.errors = "";
-          return alert("over21 - win game becouse of special");
+          return alert("WIN!");
         }
       }
       state.dealerPoint += parseInt(value);
@@ -139,7 +140,7 @@ export default createStore({
         state.playerpoint = 0;
         state.dealerPoint = 0;
         state.errors = "";
-        return alert("over21 - win game becouse of normal card");
+        return alert("WIN!");
       }
     },
   },
@@ -186,15 +187,21 @@ export default createStore({
     async hitDealer(state, value) {
       //CASE USER PRESSED STAND ON AND WANTS TO SEE DEALERS CARDS:
       let isStandOn = state.getters.getIsStandOnMode;
-      let dealersPoints = state.getters.getDealersPoints;
-      console.log({ dealersPoints });
+
       if (isStandOn)
         try {
-          let response = await axios.get(
-            `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
-          );
-          response = response.data.cards[0];
-          state.commit("increaseDealerPoints", response.value);
+          let dealersPoints = state.getters.getDealersPoints;
+          console.log(dealersPoints);
+          while (dealersPoints < 16) {
+            console.log({ dealersPoints });
+            let response = await axios.get(
+              `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
+            );
+            response = response.data.cards[0];
+            state.commit("increaseDealerPoints", response.value);
+            dealersPoints = state.getters.getDealersPoints;
+          }
+          console.log("end while loop");
         } catch (err) {
           state.commit("addError", err);
         }
@@ -215,5 +222,6 @@ export default createStore({
     getPlayersPoints: (state) => state.playerpoint,
     getDealersPoints: (state) => state.dealerPoint,
     getIsStandOnMode: (state) => state.isStandOn,
+    getCanDoubleDown: (state) => state.canDoubleDown,
   },
 });
