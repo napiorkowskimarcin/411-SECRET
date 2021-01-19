@@ -64,9 +64,35 @@ export default createStore({
       }
 
       if (value === "QUEEN" || value === "KING" || value === "JACK") {
-        return (state.playerpoint += 10);
+        state.playerpoint += 10;
+        if (state.playerpoint <= 21) return state.playerpoint;
+        else {
+          state.stats.losses++;
+          state.stats.gamesPlayed++;
+          state.isStanOn = false;
+          state.canDoubleDown = true;
+          state.isGameRunning = false;
+          state.playerpoint = 0;
+          state.dealerPoint = 0;
+          alert("over21 - lost game becouse of special");
+        }
       }
-      return (state.playerpoint += parseInt(value));
+      state.playerpoint += parseInt(value);
+      //
+      if (state.playerpoint <= 21) return state.playerpoint;
+      else {
+        state.stats.losses++;
+        state.stats.gamesPlayed++;
+        state.isStanOn = false;
+        state.canDoubleDown = true;
+        state.isGameRunning = false;
+        state.playerpoint = 0;
+        state.dealerPoint = 0;
+        alert("over21 - lost game becouse of normal card");
+      }
+
+      // console.log("current value of player with value:" + state.playerpoint);
+      // return state.playerpoint;
     },
     increaseDealerPoints(state, value) {
       if (value === "ACE") {
@@ -77,9 +103,31 @@ export default createStore({
       }
 
       if (value === "QUEEN" || value === "KING" || value === "JACK") {
-        return (state.dealerPoint += 10);
+        state.dealerPoint += 10;
+        if (state.dealerPoint <= 21) return state.dealerPoint;
+        else {
+          state.stats.wins++;
+          state.stats.gamesPlayed++;
+          state.isStanOn = false;
+          state.canDoubleDown = true;
+          state.isGameRunning = false;
+          state.playerpoint = 0;
+          state.dealerPoint = 0;
+          alert("over21 - win game becouse of special");
+        }
       }
-      return (state.dealerPoint += parseInt(value));
+      state.dealerPoint += parseInt(value);
+      if (state.playerpoint <= 21) return state.dealerPoint;
+      else {
+        state.stats.wins++;
+        state.stats.gamesPlayed++;
+        state.isStanOn = false;
+        state.canDoubleDown = true;
+        state.isGameRunning = false;
+        state.playerpoint = 0;
+        state.dealerPoint = 0;
+        alert("over21 - win game becouse of normal card");
+      }
     },
   },
   actions: {
@@ -102,7 +150,7 @@ export default createStore({
         console.log(isStandOn);
         if (!playerPoints) {
           //CASE FIRST CARDS:
-          console.log("first run");
+
           let response = await axios.get(
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
           );
@@ -111,6 +159,7 @@ export default createStore({
           state.commit("increaseDealerPoints", response[1].value);
         } else if (!isStandOn) {
           //CASE  CARD FOR THE PLAYER ONLY - BEFORE STAND IS PUSHED:
+
           let response = await axios.get(
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
           );
@@ -122,13 +171,20 @@ export default createStore({
       }
     },
     async hitDealer(state, value) {
+      //CASE USER PRESSED STAND ON AND WANTS TO SEE DEALERS CARDS:
       let isStandOn = state.getters.getIsStandOnMode;
       let dealersPoints = state.getters.getDealersPoints;
       console.log({ dealersPoints });
       if (isStandOn)
-        console.log(
-          `To fetch: https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
-        );
+        try {
+          let response = await axios.get(
+            `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
+          );
+          response = response.data.cards[0];
+          state.commit("increaseDealerPoints", response.value);
+        } catch (err) {
+          state.commit("addError", err);
+        }
     },
   },
   modules: {},
