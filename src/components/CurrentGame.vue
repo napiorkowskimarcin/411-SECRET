@@ -1,4 +1,7 @@
 <template>
+  <div v-if="areErrors" class="text-danger">
+    PLEASE RELOAD : {{ areErrors }}
+  </div>
   <div>
     Your account: <span>{{ accountValue }}</span
     >$
@@ -41,6 +44,10 @@ export default {
     },
     isGameRunning() {
       return this.$store.getters.getGameRunning;
+    },
+    areErrors() {
+      let response = this.$store.getters.getErrors;
+      return response.message;
     },
   },
 

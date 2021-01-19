@@ -12,7 +12,7 @@
     <div class="row">
       <div v-if="isGameRunning" class="col d-flex justify-content-around">
         <button class="btn btn-primary" @click="hitGame">HIT</button>
-        <button class="btn btn-primary">STAND</button>
+        <button class="btn btn-primary" @click="standOn">STAND</button>
         <button class="btn btn-primary" @click="doubleDown">DOUBLE-DOWN</button>
         <div class="btn btn-primary">Game value: {{ gameValue }}</div>
       </div>
@@ -63,6 +63,10 @@ export default {
     },
     doubleDown() {
       this.$store.commit("setDoubleDown");
+    },
+    standOn() {
+      console.log("standOn - mode on");
+      //this.$store.commit("setStandOn");
     },
   },
 };

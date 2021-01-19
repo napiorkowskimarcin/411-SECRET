@@ -4,7 +4,7 @@ import axios from "axios";
 export default createStore({
   state: {
     //PART 0 - PASSING ERROR
-    errors: ["oneerror"],
+    errors: "",
     //PART ONE - APP INFO
     accountValue: 1000,
     currentBet: 50,
@@ -19,11 +19,16 @@ export default createStore({
     canDoubleDown: true,
     //PART TWO - API INFO
     deckId: "",
-    //PART THREE - GAME VARIABLES
+    //PART THREE - GAME VARIABLES AND FLAGS
     playerpoint: 0,
     dealerPoint: 0,
+    isStandOn: false,
   },
   mutations: {
+    //PART 0 - ERROR ARRAY
+    addError(state, err) {
+      state.errors = err;
+    },
     //PART ONE - APP OPERATIONS
     setBetPlus(state) {
       state.currentBet += 25;
@@ -48,12 +53,19 @@ export default createStore({
       state.deckId = value;
     },
     increasePlayerPoints(state, value) {
-      console.log(`Player0: ${state.playerpoint}`);
-      state.playerpoint += parseFloat(value);
-      console.log(`Player1: ${state.playerpoint}`);
+      if (value === "ACE") {
+        if (state.playerpoint < 11) {
+          return (state.playerpoint += 10);
+        }
+        return (state.playerpoint += 1);
+      }
+
+      if (value === "QUEEN" || value === "KING" || value === "JACK") {
+        return (state.playerpoint += 10);
+      }
+      return (state.playerpoint += parseInt(value));
     },
     increaseDealerPoints(state, value) {
-      console.log(`Dealer0: ${state.dealerPoint}`);
       if (value === "ACE") {
         if (state.dealerPoint < 11) {
           return (state.dealerPoint += 10);
@@ -64,7 +76,7 @@ export default createStore({
       if (value === "QUEEN" || value === "KING" || value === "JACK") {
         return (state.dealerPoint += 10);
       }
-      state.playerpoint += parseFloat(value);
+      return (state.dealerPoint += parseInt(value));
     },
   },
   actions: {
@@ -77,29 +89,39 @@ export default createStore({
         response = response.data.deck_id;
         state.commit("setDeckId", response);
       } catch (err) {
-        state.errors.push(err);
+        state.commit("addError", err);
       }
     },
     async hitGame(state, value) {
       try {
-        let response = await axios.get(
-          `https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
-        );
-
-        response = response.data.cards;
-        console.log(response[0]);
-        console.log(response[1]);
-        if (!state.playerpoint) {
+        const playerPoints = state.getters.getPlayersPoints;
+        if (!playerPoints) {
+          //CASE FIRST CARDS:
+          console.log("first run");
+          let response = await axios.get(
+            `https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
+          );
+          response = response.data.cards;
           state.commit("increasePlayerPoints", response[0].value);
           state.commit("increaseDealerPoints", response[1].value);
+        } else {
+          //CASE  CARD FOR THE PLAYER ONLY:
+          let response = await axios.get(
+            `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
+          );
+          response = response.data.cards[0];
+          console.log(response);
+          state.commit("increasePlayerPoints", response.value);
         }
       } catch (err) {
-        state.errors.push(err);
+        state.commit("addError", err);
       }
     },
   },
   modules: {},
   getters: {
+    //PART ZERO - ERROR ARRAY:
+    getErrors: (state) => state.errors,
     //PART ONE - APP VARIABLES
     getCurrentBet: (state) => state.currentBet,
     getCurrentAccount: (state) => state.accountValue,
