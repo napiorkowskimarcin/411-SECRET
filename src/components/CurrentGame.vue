@@ -15,7 +15,9 @@
     <button class="btn btn-primary" @click="decreaseBet">-</button>
   </div>
   <div class="row d-flex justify-content-around" v-if="isGameRunning">
-    <button class="btn btn-danger" @click="surrender">SURRENDER</button>
+    <button class="btn btn-danger" @click="surrender" v-if="!ifStandOn">
+      SURRENDER
+    </button>
   </div>
 </template>
 
@@ -48,6 +50,9 @@ export default {
     areErrors() {
       let response = this.$store.getters.getErrors;
       return response.message;
+    },
+    ifStandOn() {
+      return this.$store.getters.getIsStandOnMode;
     },
   },
 

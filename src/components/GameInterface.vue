@@ -11,9 +11,18 @@
 
     <div class="row">
       <div v-if="isGameRunning" class="col d-flex justify-content-around">
-        <button class="btn btn-primary" @click="hitGame">HIT</button>
-        <button class="btn btn-primary" @click="standOn">STAND</button>
-        <button class="btn btn-primary" @click="doubleDown">DOUBLE-DOWN</button>
+        <button class="btn btn-primary" @click="hitGame" v-if="!ifStandOn">
+          HIT
+        </button>
+        <button class="btn btn-primary" @click="standOn" v-if="!ifStandOn">
+          STAND
+        </button>
+        <button class="btn btn-primary" @click="doubleDown" v-if="!ifStandOn">
+          DOUBLE-DOWN
+        </button>
+        <button class="btn btn-primary" @click="dealerTurn" v-if="ifStandOn">
+          CHECK DEALERS CARDS
+        </button>
         <div class="btn btn-primary">Game value: {{ gameValue }}</div>
       </div>
     </div>
@@ -23,6 +32,7 @@
         <div class="btn btn-primary">Account value: {{ accountValue }}</div>
       </div>
     </div>
+    <p>Is stand mode on: {{ ifStandOn }}</p>
   </div>
 </template>
 <script>
@@ -45,6 +55,9 @@ export default {
     gameStats() {
       return this.$store.getters.getGameStats;
     },
+    ifStandOn() {
+      return this.$store.getters.getIsStandOnMode;
+    },
   },
 
   methods: {
@@ -61,12 +74,16 @@ export default {
       //getting two cards from the deck - starting round.
       this.$store.dispatch("hitGame", this.$store.getters.getDeckId);
     },
+    async dealerTurn() {
+      //play for the dealer till it gets 17 points
+      this.$store.dispatch("hitDealer", this.$store.getters.getDeckId);
+    },
+
     doubleDown() {
       this.$store.commit("setDoubleDown");
     },
     standOn() {
-      console.log("standOn - mode on");
-      //this.$store.commit("setStandOn");
+      this.$store.commit("setStandOn");
     },
   },
 };

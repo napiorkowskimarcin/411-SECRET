@@ -52,6 +52,9 @@ export default createStore({
     setDeckId(state, value) {
       state.deckId = value;
     },
+    setStandOn(state) {
+      state.isStandOn = true;
+    },
     increasePlayerPoints(state, value) {
       if (value === "ACE") {
         if (state.playerpoint < 11) {
@@ -95,6 +98,8 @@ export default createStore({
     async hitGame(state, value) {
       try {
         const playerPoints = state.getters.getPlayersPoints;
+        let isStandOn = state.getters.getIsStandOnMode;
+        console.log(isStandOn);
         if (!playerPoints) {
           //CASE FIRST CARDS:
           console.log("first run");
@@ -104,18 +109,26 @@ export default createStore({
           response = response.data.cards;
           state.commit("increasePlayerPoints", response[0].value);
           state.commit("increaseDealerPoints", response[1].value);
-        } else {
-          //CASE  CARD FOR THE PLAYER ONLY:
+        } else if (!isStandOn) {
+          //CASE  CARD FOR THE PLAYER ONLY - BEFORE STAND IS PUSHED:
           let response = await axios.get(
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
           );
           response = response.data.cards[0];
-          console.log(response);
           state.commit("increasePlayerPoints", response.value);
         }
       } catch (err) {
         state.commit("addError", err);
       }
+    },
+    async hitDealer(state, value) {
+      let isStandOn = state.getters.getIsStandOnMode;
+      let dealersPoints = state.getters.getDealersPoints;
+      console.log({ dealersPoints });
+      if (isStandOn)
+        console.log(
+          `To fetch: https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
+        );
     },
   },
   modules: {},
@@ -132,5 +145,6 @@ export default createStore({
     getDeckId: (state) => state.deckId,
     getPlayersPoints: (state) => state.playerpoint,
     getDealersPoints: (state) => state.dealerPoint,
+    getIsStandOnMode: (state) => state.isStandOn,
   },
 });
