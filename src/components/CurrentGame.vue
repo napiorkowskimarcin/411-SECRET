@@ -1,37 +1,37 @@
 <template>
-  <div v-if="areErrors" class="text-danger">
-    PLEASE RELOAD : {{ areErrors }}
+  <div v-if="areErrors" class="bg-danger text-white text-center">
+    <p>TRY TO CONTINUE THE GAME: {{ areErrors }}</p>
   </div>
-  <div>
+  <p class="text-center">
     Your account: <span>{{ accountValue }}</span
     >$
-  </div>
-  <div v-if="!isGameRunning">
+  </p>
+  <p class="text-center" v-if="!isGameRunning">
     Set bet: <span>{{ currentBet }}</span
     >$
-  </div>
+  </p>
   <div class="row d-flex justify-content-around" v-if="!isGameRunning">
     <button class="btn btn-primary" @click="increaseBet">+</button>
     <button class="btn btn-primary" @click="decreaseBet">-</button>
   </div>
-  <div class="row d-flex justify-content-around" v-if="isGameRunning"></div>
+  <!-- <div class="row d-flex justify-content-around" v-if="isGameRunning"></div> -->
+  <div class="row">
+    <div class="col games">
+      <p class="text-center">Wins: {{ gameStats.wins }}</p>
+      <p class="text-center">Losses: {{ gameStats.losses }}</p>
+      <p class="text-center">Draws: {{ gameStats.draws }}</p>
+      <p class="text-center">Games played: {{ gameStats.gamesPlayed }}/5</p>
+    </div>
+  </div>
 </template>
 
 <script>
 //import { mapState, mapMutations } from "vuex";
 export default {
   name: "CurrentGame",
-  // computed: {
-  //   // ...mapState({ accountValue: "accountValue" }),
-  //   // ...mapState({ currentBet: "currentBet" }),
-  //   // ...mapMutations(["setBetPlus", "setBetMinus"]),
-  // },
+
   data() {
-    return {
-      // currentBet: 0,
-      // accountValue: 0,
-      //isGameRunning: 0,
-    };
+    return {};
   },
   computed: {
     currentBet() {
@@ -50,6 +50,9 @@ export default {
     ifStandOn() {
       return this.$store.getters.getIsStandOnMode;
     },
+    gameStats() {
+      return this.$store.getters.getGameStats;
+    },
   },
 
   methods: {
@@ -67,4 +70,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+p {
+  margin-bottom: 0;
+}
+</style>

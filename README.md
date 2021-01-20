@@ -2,7 +2,8 @@
 
 ## Making mode:
 
-iPhone X 812x375
+Full screen - 20.02.2011 11.50
+// iPhone X 812x375
 
 ## Project setup
 

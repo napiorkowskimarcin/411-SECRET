@@ -1,10 +1,55 @@
 <template>
   <div>
-    <p>Player temp{{ currentHandPlayer }}</p>
-    <p>Dealer temp{{ currentHandDealer }}</p>
-    <p>Player{{ handPlayer }}</p>
-    <p>Dealer{{ handDealer }}</p>
-    <p>Total history: {{ totalHistory }}</p>
+    <div class="row ">
+      <div class="col" v-if="handPlayer.length > 0">
+        <p>Players hands:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>ROUNDS:</th>
+              <th>CARDS:</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(round, index) in handPlayer" :key="index">
+              <th scope="row">{{ index + 1 }}</th>
+              <td class=" row">
+                <div
+                  v-for="(img, index) in round"
+                  :key="index"
+                  class="game col"
+                >
+                  <img :src="img" alt="" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col" v-if="handDealer.length > 0">
+        <p>Dealer hands:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>CARDS:</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(round, index) in handDealer" :key="index">
+              <td class=" row">
+                <div
+                  v-for="(img, index) in round"
+                  :key="index"
+                  class="game col"
+                >
+                  <img :src="img" alt="" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -16,13 +61,8 @@ export default {
   data() {
     return {};
   },
+
   computed: {
-    currentHandPlayer() {
-      return this.$store.getters.getCurrentCardsPlayer;
-    },
-    currentHandDealer() {
-      return this.$store.getters.getCurrentCardsDealer;
-    },
     handPlayer() {
       return this.$store.getters.getCardsPlayer;
     },
@@ -37,3 +77,9 @@ export default {
   methods: {},
 };
 </script>
+
+<style scoped>
+div > img {
+  max-height: 10vh;
+}
+</style>

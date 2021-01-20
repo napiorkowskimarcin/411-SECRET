@@ -1,14 +1,5 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col">
-        <span>Wins: {{ gameStats.wins }}</span>
-        <span>Losses: {{ gameStats.losses }}</span>
-        <span>Draws: {{ gameStats.draws }}</span>
-        <span>Games played: {{ gameStats.gamesPlayed }}/5</span>
-      </div>
-    </div>
-
+  <div class="interface">
     <div class="row">
       <div v-if="isGameRunning" class="col d-flex justify-content-around">
         <button class="btn btn-primary" @click="hitGame" v-if="!ifStandOn">
@@ -34,6 +25,12 @@
       <div v-if="!isGameRunning" class="col d-flex justify-content-around">
         <button class="btn btn-primary" @click="startGame">START</button>
         <div class="btn btn-primary">Account value: {{ accountValue }}</div>
+      </div>
+    </div>
+    <div class="row storage">
+      <div class="col d-flex justify-content-around">
+        <button class="btn btn-primary" @click="saveGame">SAVE</button>
+        <button class="btn btn-primary" @click="loadGame">LOAD</button>
       </div>
     </div>
   </div>
@@ -106,3 +103,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.interface,
+.storage {
+  margin-top: 10px;
+}
+</style>

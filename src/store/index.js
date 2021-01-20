@@ -1,9 +1,9 @@
 import { createStore } from "vuex";
 import axios from "axios";
 
-//I DID NOT FIND A NICE WAY TO SHORTCUT FOR THIS - PROBABLY I WILL TRY TO MAKE THAT RESTARTING ROUND AND GAME A LITTLE BIT NICER
+//I DID NOT FIND A NICE WAY TO SHORTCUT FOR THIS - PROBABLY I WILL TRY TO MAKE THAT FUNCTIONS AND RESTARTING GAMES/ROUNDS A LITTLE BIT NICER
 //I ALSO CAN MAKE FUNCTIONS WRITTEN A LITTLE BIT BETTER - TO DO ACCORDINGLY TO THE TIME
-//BAD WAY - LOOK FOR ENDROUND MUTATION - I WOULD LIKE TO HAVE THEM INSIDE THE STATE, NOT OUTSIDE THE OBJECT OF STATE
+//BAD WAY - LOOK FOR ENDROUND MUTATION - I WOULD LIKE TO HAVE THEM INSIDE THE STATE, NOT OUTSIDE THE OBJECT OF STATE - NEED SKGT GUYS TO ADVISE ;)
 function Reset(state) {
   state.cardPlayer.push(state.currentCardPlayer);
   state.cardDealer.push(state.currentCardDealer);
@@ -36,7 +36,16 @@ function CheckEndGame(state) {
     state.stats.wins = 0;
     state.stats.losses = 0;
     state.stats.draws = 0;
+    //
+    let localHistory = localStorage.getItem("totalHistory");
+    if (localHistory !== null) {
+      state.totalHistory = JSON.parse(localHistory);
+    }
+    //
+    let savingTotalHistory = state.totalHistory;
     state.totalHistory.push({ date: today, score: state.accountValue });
+    savingTotalHistory = JSON.stringify(savingTotalHistory);
+    localStorage.setItem("totalHistory", savingTotalHistory);
   }
 }
 
@@ -249,10 +258,10 @@ export default createStore({
           response = response.data.cards;
           state.commit("addImgPlayer", response[0].image);
           state.commit("addImgDealer", response[1].image);
-          state.commit("addCardPlayer", response[0].value);
+          state.commit("addCardPlayer", response[0].image);
           state.commit("increasePlayerPoints", response[0].value);
           state.commit("increaseDealerPoints", response[1].value);
-          state.commit("addCardDealer", response[1].value);
+          state.commit("addCardDealer", response[1].image);
         } else if (!isStandOn) {
           //CASE  CARD FOR THE PLAYER ONLY - BEFORE STAND IS PUSHED:
           let response = await axios.get(
@@ -261,7 +270,7 @@ export default createStore({
           response = response.data.cards[0];
           state.commit("addImgPlayer", response.image);
           state.commit("increasePlayerPoints", response.value);
-          state.commit("addCardPlayer", response.value);
+          state.commit("addCardPlayer", response.image);
         }
       } catch (err) {
         state.commit("addError", err);
@@ -283,7 +292,7 @@ export default createStore({
             response = response.data.cards[0];
             state.commit("increaseDealerPoints", response.value);
             state.commit("addImgDealer", response.image);
-            state.commit("addCardDealer", response.value);
+            state.commit("addCardDealer", response.image);
 
             dealersPoints = state.getters.getDealersPoints;
           }
