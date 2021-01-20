@@ -1,6 +1,32 @@
 import { createStore } from "vuex";
 import axios from "axios";
 
+//I DID NOT FIND A NICE WAY TO SHORTCUT FOR THIS - PROBABLY I WILL TRY TO MAKE THAT RESTARTING A LITTLE BIT NICER
+//I ALSO CAN MAKE FUNCTIONS WRITTEN A LITTLE BIT BETTER - TO DO ACCORDINGLY TO THE TIME
+//BAD WAY - LOOK FOR ENDROUND MUTATION - I WOULD LIKE TO HAVE THEM INSIDE THE STATE
+function Reset(state) {
+  state.cardPlayer.push(state.currentCardPlayer);
+  state.cardDealer.push(state.currentCardDealer);
+  state.stats.gamesPlayed++;
+  state.isStandOn = false;
+  state.canDoubleDown = true;
+  state.isGameRunning = false;
+  state.errors = "";
+  state.imgPlayer = [];
+  state.imgDealer = [];
+  state.currentCardPlayer = [];
+  state.currentCardDealer = [];
+}
+function ResetPoints(state) {
+  state.playerpoint = 0;
+  state.dealerPoint = 0;
+}
+function CheckEndGame(state) {
+  if (state.stats.gamesPlayed === 5) {
+    console.log("is is supposed to be end");
+  }
+}
+
 export default createStore({
   state: {
     //PART 0 - PASSING ERROR
@@ -25,6 +51,11 @@ export default createStore({
     isStandOn: false,
     imgPlayer: [],
     imgDealer: [],
+    //Round history:
+    currentCardPlayer: [],
+    currentCardDealer: [],
+    cardPlayer: [],
+    cardDealer: [],
   },
   mutations: {
     //PART 0 - ERROR ARRAY
@@ -56,16 +87,17 @@ export default createStore({
     setStandOn(state) {
       state.isStandOn = true;
     },
-    endround(state) {
-      state.stats.gamesPlayed++;
-      state.isStanOn = false;
-      state.canDoubleDown = true;
-      state.isGameRunning = false;
-      state.playerpoint = 0;
-      state.dealerPoint = 0;
-      state.errors = "";
-      return alert("over21 - lost game becouse of special");
-    },
+    //TO ASK - HOW TO IMPLEMENT IT INSIDE OF THE STATE
+    // endround(state) {
+    //   state.stats.gamesPlayed++;
+    //   state.isStandOn = false;
+    //   state.canDoubleDown = true;
+    //   state.isGameRunning = false;
+    //   state.playerpoint = 0;
+    //   state.dealerPoint = 0;
+    //   state.errors = "";
+    //   return alert("over21 - lost game becouse of special");
+    // },
     //ADD A VALUE FROM THE CARD TO CURRENT POINTS - PLAYER
     increasePlayerPoints(state, value) {
       if (value === "ACE") {
@@ -80,15 +112,10 @@ export default createStore({
         if (state.playerpoint <= 21) return state.playerpoint;
         else {
           state.stats.losses++;
-          state.stats.gamesPlayed++;
-          state.isStanOn = false;
-          state.canDoubleDown = true;
-          state.isGameRunning = false;
-          state.playerpoint = 0;
-          state.dealerPoint = 0;
-          state.errors = "";
-          state.imgPlayer = [];
-          state.imgDealer = [];
+          Reset(state);
+          ResetPoints(state);
+          CheckEndGame(state);
+
           return alert("LOSS");
         }
       }
@@ -97,15 +124,9 @@ export default createStore({
       if (state.playerpoint <= 21) return state.playerpoint;
       else {
         state.stats.losses++;
-        state.stats.gamesPlayed++;
-        state.isStanOn = false;
-        state.canDoubleDown = true;
-        state.isGameRunning = false;
-        state.playerpoint = 0;
-        state.dealerPoint = 0;
-        state.errors = "";
-        state.imgPlayer = [];
-        state.imgDealer = [];
+        Reset(state);
+        ResetPoints(state);
+        CheckEndGame(state);
         return alert("LOSS");
       }
     },
@@ -122,32 +143,22 @@ export default createStore({
         state.dealerPoint += 10;
         if (state.dealerPoint <= 21) return state.dealerPoint;
         else {
+          state.accountValue = state.accountValue + 1.5 * state.currentBet;
           state.stats.wins++;
-          state.stats.gamesPlayed++;
-          state.isStanOn = false;
-          state.canDoubleDown = true;
-          state.isGameRunning = false;
-          state.playerpoint = 0;
-          state.dealerPoint = 0;
-          state.errors = "";
-          state.imgPlayer = [];
-          state.imgDealer = [];
+          Reset(state);
+          ResetPoints(state);
+          CheckEndGame(state);
           return alert("WIN!");
         }
       }
       state.dealerPoint += parseInt(value);
       if (state.playerpoint <= 21) return state.dealerPoint;
       else {
+        state.accountValue = state.accountValue + 1.5 * state.currentBet;
         state.stats.wins++;
-        state.stats.gamesPlayed++;
-        state.isStanOn = false;
-        state.canDoubleDown = true;
-        state.isGameRunning = false;
-        state.playerpoint = 0;
-        state.dealerPoint = 0;
-        state.errors = "";
-        state.imgPlayer = [];
-        state.imgDealer = [];
+        Reset(state);
+        ResetPoints(state);
+        CheckEndGame(state);
         return alert("WIN!");
       }
     },
@@ -156,6 +167,42 @@ export default createStore({
     },
     addImgDealer(state, value) {
       state.imgDealer.push(value);
+    },
+    checkResult(state) {
+      if (state.playerpoint > state.dealerPoint) {
+        state.accountValue = state.accountValue + 1.5 * state.currentBet;
+        state.stats.wins++;
+        Reset(state);
+        ResetPoints(state);
+        CheckEndGame(state);
+        return setTimeout(alert("WIN!"), 1000);
+      }
+      if (state.playerpoint < state.dealerPoint) {
+        state.stats.losses++;
+        Reset(state);
+        ResetPoints(state);
+        CheckEndGame(state);
+        return setTimeout(alert("LOSS!"), 1000);
+      }
+      if (state.playerpoint === state.dealerPoint) {
+        state.accountValue = state.accountValue + state.currentBet;
+        state.stats.draws++;
+        Reset(state);
+        ResetPoints(state);
+        CheckEndGame(state);
+        return setTimeout(alert("DRAW!"), 1000);
+      }
+    },
+    //PART FOUR - CARD HISTORY
+    addCardPlayer(state, value) {
+      state.currentCardPlayer.push(value);
+    },
+    addCardDealer(state, value) {
+      state.currentCardDealer.push(value);
+    },
+    addRoundToCardHistory(state) {
+      state.cardPlayer.push(state.currentCardPlayer);
+      state.cardDealer.push(state.currentCardDealer);
     },
   },
   actions: {
@@ -175,7 +222,7 @@ export default createStore({
       try {
         const playerPoints = state.getters.getPlayersPoints;
         let isStandOn = state.getters.getIsStandOnMode;
-        console.log(isStandOn);
+
         if (!playerPoints) {
           //CASE FIRST CARDS:
 
@@ -185,17 +232,19 @@ export default createStore({
           response = response.data.cards;
           state.commit("addImgPlayer", response[0].image);
           state.commit("addImgDealer", response[1].image);
+          state.commit("addCardPlayer", response[0].value);
           state.commit("increasePlayerPoints", response[0].value);
           state.commit("increaseDealerPoints", response[1].value);
+          state.commit("addCardDealer", response[1].value);
         } else if (!isStandOn) {
           //CASE  CARD FOR THE PLAYER ONLY - BEFORE STAND IS PUSHED:
-
           let response = await axios.get(
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
           );
           response = response.data.cards[0];
           state.commit("addImgPlayer", response.image);
           state.commit("increasePlayerPoints", response.value);
+          state.commit("addCardPlayer", response.value);
         }
       } catch (err) {
         state.commit("addError", err);
@@ -208,7 +257,7 @@ export default createStore({
       if (isStandOn)
         try {
           let dealersPoints = state.getters.getDealersPoints;
-          console.log(dealersPoints);
+
           while (dealersPoints < 16) {
             console.log({ dealersPoints });
             let response = await axios.get(
@@ -217,9 +266,11 @@ export default createStore({
             response = response.data.cards[0];
             state.commit("increaseDealerPoints", response.value);
             state.commit("addImgDealer", response.image);
+            state.commit("addCardDealer", response.value);
+
             dealersPoints = state.getters.getDealersPoints;
           }
-          console.log("end while loop");
+          state.commit("checkResult");
         } catch (err) {
           state.commit("addError", err);
         }
@@ -243,5 +294,10 @@ export default createStore({
     getCanDoubleDown: (state) => state.canDoubleDown,
     getPlayerImg: (state) => state.imgPlayer,
     getDealerImg: (state) => state.imgDealer,
+    //PART FOUR - CURRENT HAND
+    getCurrentCardsPlayer: (state) => state.currentCardPlayer,
+    getCurrentCardsDealer: (state) => state.currentCardDealer,
+    getCardsPlayer: (state) => state.cardPlayer,
+    getCardsDealer: (state) => state.cardDealer,
   },
 });

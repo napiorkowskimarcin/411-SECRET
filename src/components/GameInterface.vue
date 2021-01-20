@@ -80,7 +80,7 @@ export default {
         this.$store.commit("setDealerMoney", this.$store.state.currentBet);
         //get the deck id from the API:  https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6
         this.$store.dispatch("axiosNewDecks");
-      } else if (0 <= this.$store.getters.getGameStats.gamesPlayed <= 5) {
+      } else if (0 <= this.$store.getters.getGameStats.gamesPlayed < 5) {
         //For the other games
         //Set selected Bet as Dealer money, and deduct it from the account value.
         this.$store.commit("setDealerMoney", this.$store.state.currentBet);

@@ -14,6 +14,9 @@
     <div>
       <GameInterface />
     </div>
+    <div>
+      <History />
+    </div>
   </div>
 </template>
 
@@ -23,6 +26,7 @@ import HandPlayer from "../components/HandPlayer";
 import HandDealer from "../components/HandDealer";
 import CurrentGame from "../components/CurrentGame";
 import GameInterface from "../components/GameInterface";
+import History from "../components/History";
 
 export default {
   name: "Home",
@@ -31,6 +35,7 @@ export default {
     HandDealer,
     CurrentGame,
     GameInterface,
+    History,
   },
 };
 </script>
