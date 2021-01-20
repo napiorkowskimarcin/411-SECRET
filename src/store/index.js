@@ -23,6 +23,8 @@ export default createStore({
     playerpoint: 0,
     dealerPoint: 0,
     isStandOn: false,
+    imgPlayer: [],
+    imgDealer: [],
   },
   mutations: {
     //PART 0 - ERROR ARRAY
@@ -46,9 +48,7 @@ export default createStore({
       state.dealerMoney *= 2;
       state.canDoubleDown = !state.canDoubleDown;
     },
-    // setDoubleDownOpposite(state) {
-    //   state.canDoubleDown = !state.canDoubleDown;
-    // },
+
     //PART TWO - API OPERATIONS
     setDeckId(state, value) {
       state.deckId = value;
@@ -87,6 +87,8 @@ export default createStore({
           state.playerpoint = 0;
           state.dealerPoint = 0;
           state.errors = "";
+          state.imgPlayer = [];
+          state.imgDealer = [];
           return alert("LOSS");
         }
       }
@@ -102,6 +104,8 @@ export default createStore({
         state.playerpoint = 0;
         state.dealerPoint = 0;
         state.errors = "";
+        state.imgPlayer = [];
+        state.imgDealer = [];
         return alert("LOSS");
       }
     },
@@ -126,6 +130,8 @@ export default createStore({
           state.playerpoint = 0;
           state.dealerPoint = 0;
           state.errors = "";
+          state.imgPlayer = [];
+          state.imgDealer = [];
           return alert("WIN!");
         }
       }
@@ -140,8 +146,16 @@ export default createStore({
         state.playerpoint = 0;
         state.dealerPoint = 0;
         state.errors = "";
+        state.imgPlayer = [];
+        state.imgDealer = [];
         return alert("WIN!");
       }
+    },
+    addImgPlayer(state, value) {
+      state.imgPlayer.push(value);
+    },
+    addImgDealer(state, value) {
+      state.imgDealer.push(value);
     },
   },
   actions: {
@@ -169,6 +183,8 @@ export default createStore({
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=2`
           );
           response = response.data.cards;
+          state.commit("addImgPlayer", response[0].image);
+          state.commit("addImgDealer", response[1].image);
           state.commit("increasePlayerPoints", response[0].value);
           state.commit("increaseDealerPoints", response[1].value);
         } else if (!isStandOn) {
@@ -178,6 +194,7 @@ export default createStore({
             `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
           );
           response = response.data.cards[0];
+          state.commit("addImgPlayer", response.image);
           state.commit("increasePlayerPoints", response.value);
         }
       } catch (err) {
@@ -199,6 +216,7 @@ export default createStore({
             );
             response = response.data.cards[0];
             state.commit("increaseDealerPoints", response.value);
+            state.commit("addImgDealer", response.image);
             dealersPoints = state.getters.getDealersPoints;
           }
           console.log("end while loop");
@@ -223,5 +241,7 @@ export default createStore({
     getDealersPoints: (state) => state.dealerPoint,
     getIsStandOnMode: (state) => state.isStandOn,
     getCanDoubleDown: (state) => state.canDoubleDown,
+    getPlayerImg: (state) => state.imgPlayer,
+    getDealerImg: (state) => state.imgDealer,
   },
 });

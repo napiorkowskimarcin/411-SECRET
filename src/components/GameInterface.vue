@@ -36,8 +36,6 @@
         <div class="btn btn-primary">Account value: {{ accountValue }}</div>
       </div>
     </div>
-    <p>Is stand mode on: {{ ifStandOn }}</p>
-    <p>Can do double down: {{ canDoubleDown }}</p>
   </div>
 </template>
 <script>
@@ -65,6 +63,12 @@ export default {
     },
     canDoubleDown() {
       return this.$store.getters.getCanDoubleDown;
+    },
+    playerImg() {
+      return this.$store.getters.getPlayerImg;
+    },
+    dealerImg() {
+      return this.$store.getters.getDealerImg;
     },
   },
 

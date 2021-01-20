@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <div class="row ">
-      <div class="col">
+      <div class="col player">
         <HandPlayer />
       </div>
       <div class="col">
         <CurrentGame />
       </div>
-      <div class="col">
+      <div class="col player">
         <HandDealer />
       </div>
     </div>
@@ -34,4 +34,8 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.player {
+  max-width: 25vw;
+}
+</style>

@@ -1,18 +1,18 @@
 <template>
   <p>PLAYER POINTS: {{ playersPoints }}</p>
-  <div class="welcome" v-if="!isGameRunning">
-    <img
-      src="https://img2.pngio.com/blue-back41024x1024png-7291024-bicycle-cards-bicycle-bicycle-playing-cards-png-729_1024.png"
-      alt=""
-      srcset=""
-    />
+  <div>
+    <div class="welcome" v-if="playerImg.length === 0">
+      <img
+        src="https://img2.pngio.com/blue-back41024x1024png-7291024-bicycle-cards-bicycle-bicycle-playing-cards-png-729_1024.png"
+        alt=""
+        srcset=""
+      />
+    </div>
   </div>
-  <div class="game" v-if="isGameRunning">
-    <img
-      src="https://img2.pngio.com/blue-back41024x1024png-7291024-bicycle-cards-bicycle-bicycle-playing-cards-png-729_1024.png"
-      alt=""
-      srcset=""
-    />
+  <div class="game d-flex flex-row" v-if="playerImg.length > 0">
+    <div v-for="(img, index) in playerImg" :key="index">
+      <img :src="img" alt="" />
+    </div>
   </div>
 </template>
 
@@ -26,15 +26,15 @@ export default {
     playersPoints() {
       return this.$store.getters.getPlayersPoints;
     },
+    playerImg() {
+      return this.$store.getters.getPlayerImg;
+    },
   },
 };
 </script>
 
 <style scoped>
-div.welcome > img {
-  max-height: 40vh;
-}
-div.game > img {
-  max-height: 40vh;
+div > img {
+  max-height: 20vh;
 }
 </style>
