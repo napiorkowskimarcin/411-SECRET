@@ -1,9 +1,9 @@
 import { createStore } from "vuex";
 import axios from "axios";
 
-//I DID NOT FIND A NICE WAY TO SHORTCUT FOR THIS - PROBABLY I WILL TRY TO MAKE THAT RESTARTING A LITTLE BIT NICER
+//I DID NOT FIND A NICE WAY TO SHORTCUT FOR THIS - PROBABLY I WILL TRY TO MAKE THAT RESTARTING ROUND AND GAME A LITTLE BIT NICER
 //I ALSO CAN MAKE FUNCTIONS WRITTEN A LITTLE BIT BETTER - TO DO ACCORDINGLY TO THE TIME
-//BAD WAY - LOOK FOR ENDROUND MUTATION - I WOULD LIKE TO HAVE THEM INSIDE THE STATE
+//BAD WAY - LOOK FOR ENDROUND MUTATION - I WOULD LIKE TO HAVE THEM INSIDE THE STATE, NOT OUTSIDE THE OBJECT OF STATE
 function Reset(state) {
   state.cardPlayer.push(state.currentCardPlayer);
   state.cardDealer.push(state.currentCardDealer);
@@ -22,8 +22,21 @@ function ResetPoints(state) {
   state.dealerPoint = 0;
 }
 function CheckEndGame(state) {
-  if (state.stats.gamesPlayed === 5) {
-    console.log("is is supposed to be end");
+  if (state.stats.gamesPlayed === 5 || state.accountValue <= 0) {
+    let today = new Date()
+      .toString()
+      .split(" ")
+      .splice(1, 4)
+      .join(" ");
+    state.stats.gamesPlayed = 0;
+    state.cardPlayer = [];
+    state.cardDealer = [];
+    state.currentCardPlayer = [];
+    state.currentCardDealer = [];
+    state.stats.wins = 0;
+    state.stats.losses = 0;
+    state.stats.draws = 0;
+    state.totalHistory.push({ date: today, score: state.accountValue });
   }
 }
 
@@ -51,11 +64,13 @@ export default createStore({
     isStandOn: false,
     imgPlayer: [],
     imgDealer: [],
-    //Round history:
+    //PART FOUR - TOTAL HISTORY:
     currentCardPlayer: [],
     currentCardDealer: [],
     cardPlayer: [],
     cardDealer: [],
+    //TotalHistory:
+    totalHistory: [],
   },
   mutations: {
     //PART 0 - ERROR ARRAY
@@ -169,28 +184,30 @@ export default createStore({
       state.imgDealer.push(value);
     },
     checkResult(state) {
-      if (state.playerpoint > state.dealerPoint) {
+      if (state.playerpoint > state.dealerPoint && state.playerpoint > 0) {
         state.accountValue = state.accountValue + 1.5 * state.currentBet;
         state.stats.wins++;
         Reset(state);
         ResetPoints(state);
-        CheckEndGame(state);
-        return setTimeout(alert("WIN!"), 1000);
+        setTimeout(alert("WIN!"), 1000);
+        return CheckEndGame(state);
       }
-      if (state.playerpoint < state.dealerPoint) {
+      if (state.playerpoint < state.dealerPoint && state.playerpoint > 0) {
         state.stats.losses++;
         Reset(state);
         ResetPoints(state);
         CheckEndGame(state);
-        return setTimeout(alert("LOSS!"), 1000);
+        setTimeout(alert("LOSS!"), 1000);
+        return CheckEndGame(state);
       }
-      if (state.playerpoint === state.dealerPoint) {
+      if (state.playerpoint === state.dealerPoint && state.playerpoint > 0) {
         state.accountValue = state.accountValue + state.currentBet;
         state.stats.draws++;
         Reset(state);
         ResetPoints(state);
         CheckEndGame(state);
-        return setTimeout(alert("DRAW!"), 1000);
+        setTimeout(alert("DRAW!"), 1000);
+        return CheckEndGame(state);
       }
     },
     //PART FOUR - CARD HISTORY
@@ -270,7 +287,7 @@ export default createStore({
 
             dealersPoints = state.getters.getDealersPoints;
           }
-          state.commit("checkResult");
+          return state.commit("checkResult");
         } catch (err) {
           state.commit("addError", err);
         }
@@ -299,5 +316,7 @@ export default createStore({
     getCurrentCardsDealer: (state) => state.currentCardDealer,
     getCardsPlayer: (state) => state.cardPlayer,
     getCardsDealer: (state) => state.cardDealer,
+    //PART FIVE - TOTAL HISTORY
+    getTotalHistory: (state) => state.totalHistory,
   },
 });

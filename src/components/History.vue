@@ -4,6 +4,7 @@
     <p>Dealer temp{{ currentHandDealer }}</p>
     <p>Player{{ handPlayer }}</p>
     <p>Dealer{{ handDealer }}</p>
+    <p>Total history: {{ totalHistory }}</p>
   </div>
 </template>
 
@@ -27,6 +28,9 @@ export default {
     },
     handDealer() {
       return this.$store.getters.getCardsDealer;
+    },
+    totalHistory() {
+      return this.$store.getters.getTotalHistory;
     },
   },
 
