@@ -80,6 +80,11 @@ export default {
 
 <style scoped>
 div > img {
-  max-height: 10vh;
+  max-height: 20vh;
+}
+@media only screen and (min-width: 992px) {
+  div > img {
+    max-height: 10vh;
+  }
 }
 </style>
