@@ -30,14 +30,14 @@ export default {
 
   data() {
     return {
-      abc: "",
+      tempData: "",
       totalHistory: "",
     };
   },
   mounted() {
-    let abc = localStorage.getItem("totalHistory");
-    if (abc !== null) {
-      this.totalHistory = JSON.parse(abc);
+    let tempData = localStorage.getItem("totalHistory");
+    if (tempData !== null) {
+      this.totalHistory = JSON.parse(tempData);
     }
   },
   computed: {},

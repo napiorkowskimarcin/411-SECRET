@@ -167,7 +167,7 @@ export default createStore({
         state.dealerPoint += 10;
         if (state.dealerPoint <= 21) return state.dealerPoint;
         else {
-          state.accountValue = state.accountValue + 1.5 * state.currentBet;
+          state.accountValue = state.accountValue + 2.5 * state.currentBet;
           state.stats.wins++;
           Reset(state);
           ResetPoints(state);
@@ -178,7 +178,7 @@ export default createStore({
       state.dealerPoint += parseInt(value);
       if (state.playerpoint <= 21) return state.dealerPoint;
       else {
-        state.accountValue = state.accountValue + 1.5 * state.currentBet;
+        state.accountValue = state.accountValue + 2.5 * state.currentBet;
         state.stats.wins++;
         Reset(state);
         ResetPoints(state);
@@ -194,7 +194,7 @@ export default createStore({
     },
     checkResult(state) {
       if (state.playerpoint > state.dealerPoint && state.playerpoint > 0) {
-        state.accountValue = state.accountValue + 1.5 * state.currentBet;
+        state.accountValue = state.accountValue + 2.5 * state.currentBet;
         state.stats.wins++;
         Reset(state);
         ResetPoints(state);
@@ -229,6 +229,27 @@ export default createStore({
     addRoundToCardHistory(state) {
       state.cardPlayer.push(state.currentCardPlayer);
       state.cardDealer.push(state.currentCardDealer);
+    },
+    addState(state, value) {
+      //PART ONE - APP INFO
+      state.accountValue = value.accountValue;
+      state.currentBet = 50;
+      state.isGameRunning = false;
+      state.dealerMoney = 0;
+      state.stats = value.stats;
+      state.canDoubleDown = true;
+      //PART TWO - API INFO
+      state.deckId = value.deckId;
+      //PART THREE - GAME VARIABLES AND FLAGS
+      state.playerpoint = value.playerpoint;
+      state.dealerPoint = value.dealerPoint;
+      state.imgPlayer = [];
+      state.imgDealer = [];
+      //PART FOUR - TOTAL HISTORY:
+      state.currentCardPlayer = [];
+      state.currentCardDealer = [];
+      state.cardPlayer = value.cardPlayer;
+      state.cardDealer = value.cardDealer;
     },
   },
   actions: {
@@ -283,9 +304,7 @@ export default createStore({
       if (isStandOn)
         try {
           let dealersPoints = state.getters.getDealersPoints;
-
           while (dealersPoints < 16) {
-            console.log({ dealersPoints });
             let response = await axios.get(
               `https://deckofcardsapi.com/api/deck/${value}/draw/?count=1`
             );
@@ -300,6 +319,14 @@ export default createStore({
         } catch (err) {
           state.commit("addError", err);
         }
+    },
+    async setStore(state, value) {
+      try {
+        console.log(value);
+        state.commit("addState", value);
+      } catch (err) {
+        state.commit("addError", err);
+      }
     },
   },
   modules: {},
@@ -327,5 +354,7 @@ export default createStore({
     getCardsDealer: (state) => state.cardDealer,
     //PART FIVE - TOTAL HISTORY
     getTotalHistory: (state) => state.totalHistory,
+    //PART SIX - GET STATE
+    getState: (state) => state,
   },
 });

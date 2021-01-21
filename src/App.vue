@@ -10,6 +10,16 @@
   </div>
 </template>
 
+<script>
+export default {
+  created() {
+    window.addEventListener("beforeunload", () => {
+      let currentState = this.$store.getters.getState;
+      localStorage.setItem("state", JSON.stringify(currentState));
+    });
+  },
+};
+</script>
 <style>
 body {
   /* background-color: rgb(116, 206, 108); */

@@ -100,6 +100,14 @@ export default {
     standOn() {
       this.$store.commit("setStandOn");
     },
+    saveGame() {
+      let currentState = this.$store.getters.getState;
+      localStorage.setItem("state", JSON.stringify(currentState));
+    },
+    loadGame() {
+      let savedState = JSON.parse(localStorage.getItem("state"));
+      this.$store.dispatch("setStore", savedState);
+    },
   },
 };
 </script>
